@@ -17,6 +17,7 @@ Displays a summary (warnings and errors) of your raspibolt's environment.
     - [Firewall connection attempts](#firewall-connection-attempts)
     - [Bitcoin Core](#bitcoin-core)
     - [Electrum Server](#electrum-server)
+  - [Preview](#preview)
 
 ## Configuration
 
@@ -111,3 +112,7 @@ Internal command used to access the logs (see `hoursAgo` in [Arguments](#argumen
 ```
 $ journalctl -u electrs --since="${hoursAgo} hours ago"
 ```
+
+## Preview
+
+<img alt="Preview" src="./preview.jpg" width="50%">
