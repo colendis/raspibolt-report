@@ -83,7 +83,7 @@ $ cat /var/log/fail2ban.log
 
 ### Firewall connection attempts
 
-Displays firewall connection attempts excluding broadcast connections "224.0.0.".
+Displays firewall connection attempts excluding broadcast connections "224.0.0." and lines containing 'UFW AUDIT'.
 
 If the file `/etc/ufw/ufw.conf` is not found in your system, a warning message will be displayed.
 

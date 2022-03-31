@@ -9,7 +9,7 @@ if [ $(whoami) != 'root' ]; then
 fi
 
 # Paths
-pathBitcoin=
+pathBitcoin=""
 
 # Colors
 color_blue='\033[0;34m'
@@ -32,7 +32,13 @@ fi
 
 # Check whether 'hoursAgo' is an integer
 if ! [[ "$hoursAgo" =~ ^[0-9]+$ ]]; then
-  echo "The argument hoursAgo must be an integer"
+  echo "The argument hoursAgo must be an integer."
+  exit 0
+fi
+
+# Check whether 'pathBitcoin' is filled in or not
+if [ ${#pathBitcoin} -eq 0 ]; then
+  echo "The variable 'pathBitcoin' is empty. Please fill it in."
   exit 0
 fi
 
@@ -69,7 +75,7 @@ print() {
 # Returns the string "No log entries found!" if 'logsPrinted' is 0
 printNoLogsFound() {
   if [ $logsPrinted -eq 0 ]; then
-    printf "${color_grey}No log entries found!${color_none}\n\n"
+    printf "${color_grey}No log entries found!${color_none}\n"
   fi
 }
 
@@ -151,10 +157,10 @@ printNoLogsFound
 
 # Fail2ban
 # ------------------------------------------------------------------------------
-printf "\n${color_blue}━━━ ${color_yellow}Fail2ban ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
-printf "${color_grey}Fail2Ban actions aren't necessary bad. For detailed information on the logs: $ sudo cat /var/log/fail2ban.log${color_none}\n\n"
+printf "\n\n${color_blue}━━━ ${color_yellow}Fail2ban ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
 
 if test -f "/etc/fail2ban/fail2ban.conf"; then
+  printf "${color_grey}Fail2Ban actions aren't necessary bad. For detailed information on the logs: $ sudo cat /var/log/fail2ban.log${color_none}\n\n"
   logsPrinted=0
 
   while read line
@@ -182,16 +188,18 @@ if test -f "/etc/fail2ban/fail2ban.conf"; then
   printNoLogsFound
 else
   printf "${color_red}Fail2ban was not found in your system.\n\n"
-  printf "Fail2ban is a log-parsing application that monitors system logs for symptoms of an automated attack.${color_none}\n\n"
+  printf "${color_grey}Fail2ban is a log-parsing application that monitors system logs for symptoms of an automated attack.\n\n"
+  printf "If you want to install Fail2ban: $ sudo apt install fail2ban\n\n"
+  printf "If you want to know if Fail2ban is installed: $ sudo fail2ban-client status${color_none}\n\n"
 fi
 
 
 # Firewall connection attempts
 # ------------------------------------------------------------------------------
-printf "\n${color_blue}━━━ ${color_yellow}Firewall connections attempts ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
-printf "${color_grey}For detailed information on the logs: $ sudo cat /var/log/ufw.log${color_none}\n\n"
+printf "\n\n${color_blue}━━━ ${color_yellow}Firewall connections attempts ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
 
 if test -f "/etc/ufw/ufw.conf"; then
+  printf "${color_grey}For detailed information on the logs: $ sudo cat /var/log/ufw.log${color_none}\n\n"
   logsPrinted=0
 
   while read line
@@ -215,53 +223,53 @@ if test -f "/etc/ufw/ufw.conf"; then
      fi
     fi
   # INFO: filter all broadcast connections (224.0.0.)
-  done <<< $(cat /var/log/ufw.log | grep -av '224.0.0.')
+  done <<< $(cat /var/log/ufw.log | egrep -av -e '224\.0\.0\.|UFW AUDIT')
 
   printNoLogsFound
 else
-  printf "${color_red}UFW was not found in your system.\n\n"
-  printf "UFW manages a netfilter firewall.${color_none}\n\n"
+  printf "${color_red}Either UFW is not in your system or the logs are not activated.\n\n"
+  printf "${color_grey}UFW manages a netfilter firewall.\n\n"
+  printf "If you want to know if UFW is installed: $ sudo ufw status\n\n"
+  printf "If you alreday have installed UFW and want to activate the logs: $ sudo ufw logging on\n\n"
+  printf "If you want to install UFW: $ sudo apt install ufw${color_none}\n\n"
 fi
 
 
 # Bitcoin Core logs
 # ------------------------------------------------------------------------------
-printf "\n${color_blue}━━━ ${color_yellow}Bitcoin Core ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printf "\n\n${color_blue}━━━ ${color_yellow}Bitcoin Core ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printf "${color_grey}For detailed information on the logs: $ sudo cat ${pathBitcoin}debug.log${color_none}\n\n"
 
-if [ ${#pathBitcoin} -eq 0 ]; then
-  echo "The variable 'pathBitcoin' is empty. Please fill it in."
-else
-  printf "${color_grey}For detailed information on the logs: $ sudo cat ${pathBitcoin}debug.log${color_none}\n\n"
+logsPrinted=0
 
-  while read line
-  do
-    # Trim line
-    line=$(echo $line | sed 's/ *$//g')
+while read line
+do
+  # Trim line
+  line=$(echo $line | sed 's/ *$//g')
 
-    if [ ${#line} == 0 ]; then
-      break
+  if [ ${#line} == 0 ]; then
+    break
+  fi
+
+  # Date's format: yyyy-MM-ddThh:mm:ssZ (ie: 2009-01-03T18:15:00Z)
+  entryDateMatch=$(echo $line | sed "s/\([[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}T[[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}Z\) \(.*\)$/\1/")
+
+  if [ ${#entryDateMatch} != 0 ]; then
+    entryDateTimeStamp=$(getMilliseconds $entryDateMatch)
+
+    if [ $entryDateTimeStamp -gt $dateFromTimeStamp ]; then
+      print "$line"
+      logsPrinted=1
     fi
+  fi
+done <<< $(cat "${pathBitcoin}debug.log" | egrep -i --color=always 'error|warn(ing)?')
 
-    # Date's format: yyyy-MM-ddThh:mm:ssZ (ie: 2009-01-03T18:15:00Z)
-    entryDateMatch=$(echo $line | sed "s/\([[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}T[[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}Z\) \(.*\)$/\1/")
-
-    if [ ${#entryDateMatch} != 0 ]; then
-      entryDateTimeStamp=$(getMilliseconds $entryDateMatch)
-
-      if [ $entryDateTimeStamp -gt $dateFromTimeStamp ]; then
-        print "$line"
-        logsPrinted=1
-      fi
-    fi
-  done <<< $(cat "${pathBitcoin}debug.log" | egrep -i --color=always 'error|warn(ing)?')
-
-  printNoLogsFound
-fi
+printNoLogsFound
 
 
 # Electrum Server logs
 # ------------------------------------------------------------------------------
-printf "\n${color_blue}━━━ ${color_yellow}Electrum Server ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printf "\n\n${color_blue}━━━ ${color_yellow}Electrum Server ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
 printf "${color_grey}For detailed information on the logs: $ sudo journalctl -u electrs${color_none}\n\n"
 
 logsPrinted=0
