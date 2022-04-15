@@ -1,4 +1,4 @@
-Displays a summary (warnings and errors) of your raspibolt's environment.
+Displays a summary (warnings, errors, etc...) of your raspibolt's environment.
 
 # Contents
 
@@ -77,6 +77,12 @@ Command used to access the logs:
 
 ```
 $ cat /var/log/fail2ban.log
+```
+
+Additionally, statistics about failed and banned actions will be displayed:
+
+```
+$ sudo fail2ban-client status sshd
 ```
 
 ## Firewall connection attempts

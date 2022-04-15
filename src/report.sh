@@ -186,6 +186,10 @@ if test -f "/etc/fail2ban/fail2ban.conf"; then
   done <<< $(cat /var/log/fail2ban.log | grep  -i --color=always 'fail2ban\.actions')
 
   printNoLogsFound
+
+  printf "\n\n${color_grey}Statistics about failed and banned actions. For detailed information: $ sudo fail2ban-client status sshd${color_none}\n\n"
+
+  sudo fail2ban-client status sshd
 else
   printf "${color_red}Fail2ban was not found in your system.\n\n"
   printf "${color_grey}Fail2ban is a log-parsing application that monitors system logs for symptoms of an automated attack.\n\n"
