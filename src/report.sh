@@ -289,3 +289,13 @@ do
 done <<< $(journalctl -u electrs --since="${hoursAgo} hours ago" | egrep -i --color=always 'error|warn(ing)?')
 
 printNoLogsFound
+
+
+# Tor Hidden Services
+# ------------------------------------------------------------------------------
+printf "\n\n${color_blue}━━━ ${color_yellow}Tor Hidden Services ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printf "${color_grey}Active tor hidden services. For detailed information: $ cat /etc/tor/torrc${color_none}\n\n"
+
+cat /etc/tor/torrc | egrep -i --color=always ^HiddenServiceDir
+
+print ""
