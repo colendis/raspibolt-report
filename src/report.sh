@@ -230,7 +230,7 @@ else
   printf "${color_red}Either UFW is not in your system or the logs are not activated.\n\n"
   printf "${color_grey}UFW manages a netfilter firewall.\n\n"
   printf "If you want to know if UFW is installed: $ sudo ufw status\n\n"
-  printf "If you alreday have installed UFW and want to activate the logs: $ sudo ufw logging on\n\n"
+  printf "If you alreaday have installed UFW and want to activate the logs: $ sudo ufw logging on\n\n"
   printf "If you want to install UFW: $ sudo apt install ufw${color_none}\n\n"
 fi
 
