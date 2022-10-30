@@ -63,13 +63,13 @@ logsPrinted=0
 # Argument 1: represents the input
 print() {
   line=$(expr substr "$1" 1 $printMaxLength)
-  suffix=""
+  lineSuffix=""
 
   if [ ${#1} -gt $printMaxLength ]; then
-    suffix="..."
+    lineSuffix="..."
   fi
 
-  echo "$line$suffix"
+  echo "$line$lineSuffix"
 }
 
 # Returns the string "No log entries found!" if 'logsPrinted' is 0
@@ -85,6 +85,16 @@ getMilliseconds() {
   echo $(($(date -d "$1" +%s%N)/1000000))
 }
 
+# Returns a formatted title with a fixed lenght
+printTitle() {
+  titleLenght=$(expr length "$1")
+  titleSuffixLength=$(expr 100 - ${titleLenght})
+
+  printf "\n\n${color_blue}━━━ ${color_yellow}$1 ${color_blue}"
+  for i in $(seq 1 $titleSuffixLength); do printf "━"; done
+  printf "${color_none}\n\n"
+}
+
 
 # Start
 # ------------------------------------------------------------------------------
@@ -93,8 +103,8 @@ printf "\nDisplaying logs from $dateFrom ($hoursAgo hours ago)"
 
 # Logins
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Logins ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}"
-printf "\n\n${color_grey}Logins between 22:00 and 07:59 are considered suspicious. For detailed information on the logs: $ last${color_none}\n\n"
+printTitle "Logins"
+printf "${color_grey}Logins between 22:00 and 07:59 are considered suspicious. For detailed information on the logs: $ last${color_none}\n\n"
 
 logsPrinted=0
 
@@ -125,8 +135,8 @@ printNoLogsFound
 
 # Login attempts
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Login attempts ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}"
-printf "\n\n${color_grey}For detailed information on the logs: $ sudo cat /var/log/auth.log${color_none}\n\n"
+printTitle "Login attempts"
+printf "${color_grey}For detailed information on the logs: $ sudo cat /var/log/auth.log${color_none}\n\n"
 
 logsPrinted=0
 
@@ -157,7 +167,7 @@ printNoLogsFound
 
 # Fail2ban
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Fail2ban ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printTitle "Fail2ban"
 
 if test -f "/etc/fail2ban/fail2ban.conf"; then
   printf "${color_grey}Fail2Ban actions aren't necessary bad. For detailed information on the logs: $ sudo cat /var/log/fail2ban.log${color_none}\n\n"
@@ -200,7 +210,7 @@ fi
 
 # Firewall connection attempts
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Firewall connections attempts ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printTitle "Firewall connections attempts"
 
 if test -f "/etc/ufw/ufw.conf"; then
   printf "${color_grey}For detailed information on the logs: $ sudo cat /var/log/ufw.log${color_none}\n\n"
@@ -241,7 +251,7 @@ fi
 
 # Bitcoin Core logs
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Bitcoin Core ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printTitle "Bitcoin Core"
 printf "${color_grey}For detailed information on the logs: $ sudo cat ${pathBitcoin}debug.log${color_none}\n\n"
 
 logsPrinted=0
@@ -273,7 +283,7 @@ printNoLogsFound
 
 # Electrum Server logs
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Electrum Server ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printTitle "Electrum Server"
 printf "${color_grey}For detailed information on the logs: $ sudo journalctl -u electrs${color_none}\n\n"
 
 logsPrinted=0
@@ -297,7 +307,7 @@ printNoLogsFound
 
 # Tor Hidden Services
 # ------------------------------------------------------------------------------
-printf "\n\n${color_blue}━━━ ${color_yellow}Tor Hidden Services ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
+printTitle "Tor Hidden Services"
 printf "${color_grey}Active tor hidden services. For detailed information: $ cat /etc/tor/torrc${color_none}\n\n"
 
 cat /etc/tor/torrc | egrep -ai --color=always ^HiddenServiceDir
