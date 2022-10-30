@@ -42,7 +42,7 @@ if [ ${#pathBitcoin} -eq 0 ]; then
   exit 0
 fi
 
-# Calculate date and timestamp depending on 'hoursAgo'
+# Calculate date (format: MMM DD HH:mm:ss) and timestamp depending on 'hoursAgo'
 dateFrom=$(date -d "now-$hoursAgo hours" +"%b %d %H:%M:%S")
 dateFromTimeStamp=$(($(date -d "now-$hoursAgo hours" +%s%N)/1000000))
 
@@ -118,7 +118,7 @@ do
 
   logsPrinted=1
 # Remove unnecessary last line ("wtmp begins")
-done <<< $(last -R -s "-${hoursAgo}hours" | grep -v "wtmp begins")
+done <<< $(last -R -s "-${hoursAgo}hours" | grep -iv "wtmp begins")
 
 printNoLogsFound
 
@@ -150,7 +150,7 @@ do
       logsPrinted=1
     fi
   fi
-done <<< $(cat /var/log/auth.log | egrep --color=always 'Failed|Failure|preauth|Connection closed')
+done <<< $(cat /var/log/auth.log | egrep -ai --color=always 'failed|failure|preauth|connection closed')
 
 printNoLogsFound
 
@@ -183,7 +183,7 @@ if test -f "/etc/fail2ban/fail2ban.conf"; then
         logsPrinted=1
       fi
     fi
-  done <<< $(cat /var/log/fail2ban.log | grep  -i --color=always 'fail2ban\.actions')
+  done <<< $(cat /var/log/fail2ban.log | grep -ai --color=always 'fail2ban\.actions')
 
   printNoLogsFound
 
@@ -227,7 +227,7 @@ if test -f "/etc/ufw/ufw.conf"; then
      fi
     fi
   # INFO: filter all broadcast connections (224.0.0.)
-  done <<< $(cat /var/log/ufw.log | egrep -av -e '224\.0\.0\.|UFW AUDIT')
+  done <<< $(cat /var/log/ufw.log | egrep -aiv -e '224\.0\.0\.|UFW AUDIT')
 
   printNoLogsFound
 else
@@ -266,7 +266,7 @@ do
       logsPrinted=1
     fi
   fi
-done <<< $(cat "${pathBitcoin}debug.log" | egrep -i --color=always 'error|warn(ing)?')
+done <<< $(cat "${pathBitcoin}debug.log" | egrep -ai --color=always 'error|warn(ing)?')
 
 printNoLogsFound
 
@@ -290,7 +290,7 @@ do
 
   print "$line"
   logsPrinted=1
-done <<< $(journalctl -u electrs --since="${hoursAgo} hours ago" | egrep -i --color=always 'error|warn(ing)?')
+done <<< $(journalctl -u electrs --since="${hoursAgo} hours ago" | egrep -ai --color=always 'error|warn(ing)?')
 
 printNoLogsFound
 
@@ -300,6 +300,6 @@ printNoLogsFound
 printf "\n\n${color_blue}━━━ ${color_yellow}Tor Hidden Services ${color_blue}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${color_none}\n\n"
 printf "${color_grey}Active tor hidden services. For detailed information: $ cat /etc/tor/torrc${color_none}\n\n"
 
-cat /etc/tor/torrc | egrep -i --color=always ^HiddenServiceDir
+cat /etc/tor/torrc | egrep -ai --color=always ^HiddenServiceDir
 
 print ""
