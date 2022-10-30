@@ -101,10 +101,10 @@ printTitle() {
 printf "\nDisplaying logs from $dateFrom ($hoursAgo hours ago)"
 
 
-# Logins
+# Login sessions
 # ------------------------------------------------------------------------------
-printTitle "Logins"
-printf "${color_grey}Logins between 22:00 and 07:59 are considered suspicious. For detailed information on the logs: $ last${color_none}\n\n"
+printTitle "Login sessions"
+printf "${color_grey}Login sessions between 22:00 and 07:59 are considered suspicious. For detailed information on the logs: $ last${color_none}\n\n"
 
 logsPrinted=0
 
@@ -133,9 +133,9 @@ done <<< $(last -R -s "-${hoursAgo}hours" | grep -iv "wtmp begins")
 printNoLogsFound
 
 
-# Login attempts
+# Login attempts failed
 # ------------------------------------------------------------------------------
-printTitle "Login attempts"
+printTitle "Login attempts failed"
 printf "${color_grey}For detailed information on the logs: $ sudo cat /var/log/auth.log${color_none}\n\n"
 
 logsPrinted=0
@@ -163,6 +163,54 @@ do
 done <<< $(cat /var/log/auth.log | egrep -ai --color=always 'failed|failure|preauth|connection closed')
 
 printNoLogsFound
+
+
+# Login attempts succeeded
+# ------------------------------------------------------------------------------
+printTitle "Login attempts succeeded"
+printf "${color_grey}For detailed information on the logs: $ sudo cat /var/log/auth.log${color_none}\n\n"
+printf "${color_grey}If any login has been made by an unknown IP, you should take preventive measures:${color_none}\n"
+printf "${color_grey} - Block suspicious IPs or range of IPs in your firewall (UFW)${color_none}\n"
+printf "${color_grey} - Allow only local connections in your firewall (UFW)${color_none}\n"
+printf "${color_grey} - If you log in with a password, you should change it by a very strong one${color_none}\n"
+printf "${color_grey} - If you log in with a public key, you might want to generate a new key${color_none}\n\n"
+
+logsPrinted=0
+usageOfPasswordDetected=0
+
+while read line
+do
+  # Trim line
+  line=$(echo $line | sed 's/ *$//g')
+
+  if [ ${#line} == 0 ]; then
+    break
+  fi
+
+  # Look for log in with password
+  usageOfPasswordMatch=$(echo $line | egrep -ai "accepted password")
+  if [ ${#usageOfPasswordMatch} != 0 ]; then
+    usageOfPasswordDetected=1
+  fi
+
+  # Date's format: MMM DD hh:mm:ss (ie: Jan 03 18:15:00) -> Attention: the date does not include the year!
+  entryDateMatch=$(echo $line | sed "$dateFormat_loginattemps")
+
+  if [ ${#entryDateMatch} != 0 ]; then
+    entryDateTimeStamp=$(getMilliseconds "$entryDateMatch")
+
+    if [ $entryDateTimeStamp -gt $dateFromTimeStamp ]; then
+      print "$line"
+      logsPrinted=1
+    fi
+  fi
+done <<< $(cat /var/log/auth.log | egrep -ai --color=always 'new session|accepted password|accepted publickey')
+
+printNoLogsFound
+
+if [ $usageOfPasswordDetected -eq 1 ]; then
+  printf '%b' "\n${color_red}\033[1mDetected usage of password to log in. It's highly recommended to log in with a public key you only own. This increases the security a lot!\033[0m${color_none}\n"
+fi
 
 
 # Fail2ban
