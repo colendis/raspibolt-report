@@ -53,6 +53,8 @@ Displays closed and active login sessions.
 
 Logins between 22:00 and 07:59 will be considered suspicious and therefore marked in red. If you want to use different hours, you'll have to modify the RegExp.
 
+Active sessions will we marked in red as well.
+
 Command used to access the logs (see `hoursAgo` in [Arguments](#arguments)):
 
 ```

@@ -117,8 +117,8 @@ do
     break
   fi
 
-  # Filter all hours between 22:00-07:59
-  match=$(echo $line | grep --color=always '\( 2[2-3]:[0-5][0-9] \)\|\( 0[0-7]:[0-5][0-9] \)')
+  # Filter all hours between 22:00-07:59 and active sessions
+  match=$(echo $line | grep --color=always '\( 2[2-3]:[0-5][0-9] \)\|\( 0[0-7]:[0-5][0-9] \)\|\(still logged in\)')
 
   if [ ${#match} = 0 ]; then
     print "$line"
