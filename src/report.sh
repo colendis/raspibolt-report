@@ -47,14 +47,14 @@ dateFrom=$(date -d "now-$hoursAgo hours" +"%b %d %H:%M:%S")
 dateFromTimeStamp=$(($(date -d "now-$hoursAgo hours" +%s%N)/1000000))
 
 # Date's formats
-# Format: MMM DD hh:mm:ss (ie: Jan 03 18:15:00) -> Attention: the date does not include the year!
-dateFormat_loginattemps="s/\([[:alpha:]]\{3\} [[:digit:]]\{2\} [[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}\) \(.*\)$/\1/"
+# Format: MMM DD hh:mm:ss (ie: Jan [3|03] 18:15:00) -> Attention: the date does not include the year!
+dateFormat_loginattemps="s/\([a-zA-Z]\{3\} [0-9]\{1,2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\) \(.*\)$/\1/"
 # Format: yyyy-MM-dd hh:mm:ss (ie: 2009-01-03 18:15:00)
-dateFormat_fail2ban="s/\([[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\} [[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}\)\(.*\)$/\1/"
-# Format: MMM DD hh:mm:ss (ie: Jan 03 18:15:00) -> Attention: the date does not include the year!
-dateFormat_ufw="s/\([[:alpha:]]\{3\} [[:digit:]]\{2\} [[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}\) \(.*\)$/\1/"
+dateFormat_fail2ban="s/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\)\(.*\)$/\1/"
+# Format: MMM DD hh:mm:ss (ie: Jan [3|03] 18:15:00) -> Attention: the date does not include the year!
+dateFormat_ufw="s/\([a-zA-Z]\{3\} [0-9]\{1,2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\) \(.*\)$/\1/"
 # Format of bitcoin logs: yyyy-MM-ddThh:mm:ssZ (ie: 2009-01-03T18:15:00Z)
-dateFormat_bitcoin="s/\([[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}T[[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}Z\) \(.*\)$/\1/"
+dateFormat_bitcoin="s/\([0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}Z\) \(.*\)$/\1/"
 
 # Whether any log entry was displayed (0: false, 1: true)
 logsPrinted=0
