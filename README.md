@@ -4,7 +4,7 @@ Displays a summary (warnings, errors, etc...) of your raspibolt's environment.
 
 - [Contents](#contents)
 - [Configuration](#configuration)
-  - [Bitcoin's path](#bitcoins-path)
+  - [Bitcoin data folder's path](#bitcoin-data-folders-path)
 - [Arguments](#arguments)
   - [Period in hours to look for events](#period-in-hours-to-look-for-events)
 - [Events](#events)
@@ -21,14 +21,16 @@ Displays a summary (warnings, errors, etc...) of your raspibolt's environment.
 
 The script `requires sudo or root privileges` in order to access the logs.
 
-To run the script you'll need to fill in following variables.
+To run the script you'll need to fill in following variables:
 
-## Bitcoin's path
+1. [pathBitcoin](#bitcoin-data-folders-path)
 
-Path to bitcoin folder.
+## Bitcoin data folder's path
+
+Location where Bitcoin's data files are stored:
 
 ```sh
-pathBitcoin="/mnt/ext/bitcoin/"
+pathBitcoin="PATH/TO/BITCOIN/DATA/FOLDER"
 ```
 
 # Arguments
