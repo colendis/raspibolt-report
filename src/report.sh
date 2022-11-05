@@ -274,10 +274,10 @@ if test -f "/etc/ufw/ufw.conf"; then
     fi
 
     # Date's format: MMM DD hh:mm:ss (ie: Jan 03 18:15:00) -> Attention: the date does not include the year!
-    entryDateMatch=$(echo $line | sed "s/\([[:alpha:]]\{3\} [[:digit:]]\{2\} [[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}\) \(.*\)$/\1/")
+    entryDateMatch=$(echo $line | sed "$dateFormat_ufw")
 
     if [ ${#entryDateMatch} != 0 ]; then
-      entryDateTimeStamp=$(getMilliseconds $entryDateMatch)
+      entryDateTimeStamp=$(getMilliseconds "$entryDateMatch")
 
       if [ $entryDateTimeStamp -gt $dateFromTimeStamp ]; then
         print "$line"
@@ -314,10 +314,10 @@ do
   fi
 
   # Date's format: yyyy-MM-ddThh:mm:ssZ (ie: 2009-01-03T18:15:00Z)
-  entryDateMatch=$(echo $line | sed "s/\([[:digit:]]\{4\}-[[:digit:]]\{2\}-[[:digit:]]\{2\}T[[:digit:]]\{2\}:[[:digit:]]\{2\}:[[:digit:]]\{2\}Z\) \(.*\)$/\1/")
+  entryDateMatch=$(echo $line | sed "$dateFormat_bitcoin")
 
   if [ ${#entryDateMatch} != 0 ]; then
-    entryDateTimeStamp=$(getMilliseconds $entryDateMatch)
+    entryDateTimeStamp=$(getMilliseconds "$entryDateMatch")
 
     if [ $entryDateTimeStamp -gt $dateFromTimeStamp ]; then
       print "$line"
