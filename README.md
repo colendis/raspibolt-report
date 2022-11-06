@@ -16,6 +16,7 @@ Displays a summary (warnings, errors, etc...) of your raspibolt's environment.
   - [Bitcoin Core](#bitcoin-core)
   - [Electrum Server](#electrum-server)
   - [Tor Hidden Services](#tor-hidden-services)
+  - [Services](#services)
 
 # Configuration
 
@@ -160,3 +161,9 @@ $ cat /etc/tor/torrc
 ```
 
 <img alt="Tor Hidden Services" src="./static/tor_hidden_services.png" with="750" />
+
+## Services
+
+Services that failed to start.
+
+<img alt="Services Failed To Start" src="./static/services_failed_start.png" with="1150" />
