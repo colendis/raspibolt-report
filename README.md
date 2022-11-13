@@ -166,4 +166,10 @@ $ cat /etc/tor/torrc
 
 Services that failed to start.
 
+Command used:
+
+```
+$ systemctl list-units --failed
+```
+
 <img alt="Services Failed To Start" src="./static/services_failed_start.png" with="1150" />

@@ -363,9 +363,8 @@ cat /etc/tor/torrc | egrep -ai --color=always ^HiddenServiceDir
 # Services
 # ------------------------------------------------------------------------------
 printTitle "Services"
-printf "${color_grey}Services that failed to start. For detailed information: $ sudo systemctl --type=service${color_none}\n"
-printf "${color_grey}Running services: $ sudo systemctl --type=service --state=running${color_none}\n\n"
+printf "${color_grey}Services that failed to start. For detailed information: $ sudo systemctl list-units --failed${color_none}\n\n"
 
-systemctl list-units --type=service | egrep -ai --color=always 'failed|error'
+systemctl list-units --failed
 
 print ""
